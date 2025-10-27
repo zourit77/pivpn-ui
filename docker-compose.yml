@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  pivpn-ui:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: pivpn-ui
+    restart: unless-stopped
+    ports:
+      - "3000:3000"               # accès depuis le navigateur
+    environment:
+      - AUTH_TOKEN=${AUTH_TOKEN}
+    volumes:
+      # Montre le répertoire contenant les certificats PiVPN de l’hôte
+      - /etc/openvpn/easy-rsa/pki:/etc/openvpn/easy-rsa/pki:ro
+      # (optionnel) monte un .env local pour surcharger les variables
+      - ./server/.env:/app/.env:ro
+    # Le conteneur doit pouvoir exécuter sudo → besoin du cap_add
+    cap_add:
+      - SYS_ADMIN
+    # Si vous avez installé pivpn dans le conteneur, exposez le binaire
+    # (sinon, montez-le depuis l’hôte)
+    # volumes:
+    #   - /usr/local/bin/pivpn:/usr/local/bin/pivpn:ro
