@@ -33,13 +33,12 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 EXPOSE 3000
 
 # -------------------------------------------------
-# Variable d’environnement par défaut
+# Variables d’environnement
 # -------------------------------------------------
 ENV NODE_ENV=production
-ENV AUTH_TOKEN=CHANGE_ME   # à remplacer ou à injecter via .env
+ENV AUTH_TOKEN=CHANGE_ME   # valeur par défaut, à remplacer ou à injecter via .env
 
 # -------------------------------------------------
 # Point d’entrée
 # -------------------------------------------------
 ENTRYPOINT ["entrypoint.sh"]
-
