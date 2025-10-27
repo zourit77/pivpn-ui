@@ -4,31 +4,40 @@
 FROM node:20-alpine
 
 # -------------------------------------------------
-# Crée un répertoire de travail
+# Répertoire de travail dans le conteneur
 # -------------------------------------------------
 WORKDIR /app
 
 # -------------------------------------------------
-# Copie les sources du serveur
+# Copier uniquement les fichiers de dépendances
 # -------------------------------------------------
+# - package.json  (obligatoire)
+# - package-lock.json (facultatif, améliore la reproductibilité)
 COPY server/package*.json ./
-RUN npm ci --only=production
 
+# -------------------------------------------------
+# Installer les dépendances en mode production
+# -------------------------------------------------
+RUN npm install --omit=dev
+
+# -------------------------------------------------
+# Copier le reste du code serveur
+# -------------------------------------------------
 COPY server/ ./
 
 # -------------------------------------------------
-# Copie le front‑end (servi statiquement)
+# Copier le front‑end statique
 # -------------------------------------------------
 COPY public/ ./public
 
 # -------------------------------------------------
-# Ajoute le script d’entrée
+# Script d’entrée
 # -------------------------------------------------
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # -------------------------------------------------
-# Expose le port de l’API (et du front‑end)
+# Port exposé
 # -------------------------------------------------
 EXPOSE 3000
 
@@ -36,7 +45,7 @@ EXPOSE 3000
 # Variables d’environnement
 # -------------------------------------------------
 ENV NODE_ENV=production
-ENV AUTH_TOKEN=CHANGE_ME   # valeur par défaut, à remplacer ou à injecter via .env
+ENV AUTH_TOKEN=motdepasse
 
 # -------------------------------------------------
 # Point d’entrée
